@@ -19,6 +19,13 @@ const SECTIONS = [
   { slug: 'reflections', latin: 'Meditationes' },
 ] as const
 
+// Scripture set in the Fides section (Douay-Rheims, public domain)
+const FIDES_VERSE = {
+  text: 'Now faith is the substance of things to be hoped for, the evidence of things that appear not.',
+  reference: 'Hebrews 11:1',
+  translation: 'Douay-Rheims',
+}
+
 // ── Small typographic pieces ──────────────────────────────────────
 
 const caps: React.CSSProperties = {
@@ -392,7 +399,7 @@ export default async function HomePage() {
               </div>
             </article>
             <div>
-              {faith.posts[0].excerpt && (
+              <figure style={{ borderLeft: '3px solid var(--ms-accent)', paddingLeft: 28, marginBottom: 64 }}>
                 <blockquote
                   style={{
                     fontFamily: 'var(--ms-display)',
@@ -402,14 +409,15 @@ export default async function HomePage() {
                     lineHeight: 1.3,
                     letterSpacing: '-0.015em',
                     color: 'var(--ms-ink)',
-                    borderLeft: '3px solid var(--ms-accent)',
-                    paddingLeft: 28,
-                    marginBottom: 64,
+                    marginBottom: 20,
                   }}
                 >
-                  “{faith.posts[0].excerpt}”
+                  “{FIDES_VERSE.text}”
                 </blockquote>
-              )}
+                <figcaption style={{ ...caps, color: 'var(--ms-accent)' }}>
+                  {FIDES_VERSE.reference} <span style={{ color: 'var(--ms-stone-dk)', marginLeft: 8 }}>— {FIDES_VERSE.translation}</span>
+                </figcaption>
+              </figure>
               <div className="ed-fides-list" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '40px 32px' }}>
                 {faith.posts.slice(1, 5).map(p => (
                   <article key={p.id}>
