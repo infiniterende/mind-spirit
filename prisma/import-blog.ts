@@ -146,7 +146,7 @@ const FEATURED = new Set([
 ])
 
 const slugify = (s: string) =>
-  s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[’']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+  s.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[’']/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 
 // Squarespace auto-generated slugs are random strings; derive one from the title instead
 function cleanSlug(p: ExportedPost): string {

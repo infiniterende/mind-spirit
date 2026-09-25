@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { Masthead } from '@/components/Masthead'
 import { Footer } from '@/components/Footer'
+import { HideOnAdmin } from '@/components/HideOnAdmin'
 
 export const metadata: Metadata = {
   title: {
@@ -23,9 +24,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Masthead />
+        <HideOnAdmin>
+          <Masthead />
+        </HideOnAdmin>
         <main>{children}</main>
-        <Footer />
+        <HideOnAdmin>
+          <Footer />
+        </HideOnAdmin>
       </body>
     </html>
   )
