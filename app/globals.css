@@ -1,0 +1,190 @@
+/* ── Google Fonts ─────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Corinthia:wght@400;700&display=swap');
+
+@import "tailwindcss";
+
+/* ── Design Tokens ────────────────────────────────────── */
+:root {
+  --ms-white:    #FFFFFF;
+  --ms-off:      #F5F4F2;
+  --ms-stone:    #C8BFB4;
+  --ms-stone-dk: #9A9088;
+  --ms-ink:      #0D0D0D;
+  --ms-ink-soft: #4A4642;
+  --ms-rule:     #E2DFDC;
+  --ms-accent:   #A3161A;
+
+  /* Fixed editorial tones: stay black/bone in both themes */
+  --ms-noir:     #0B0B0B;
+  --ms-bone:     #F4F1EC;
+
+  --ms-display:  'Playfair Display', Georgia, serif;
+  --ms-body:     'DM Sans', system-ui, -apple-system, sans-serif;
+  --ms-masthead: 'Bodoni Moda', 'Didot', 'Bodoni MT', Georgia, serif;
+  --ms-serif:    'Cormorant Garamond', Garamond, Georgia, serif;
+  --ms-script:   'Corinthia', 'Snell Roundhand', cursive;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ms-white:    #111110;
+    --ms-off:      #1A1917;
+    --ms-stone:    #6A6260;
+    --ms-stone-dk: #4A4240;
+    --ms-ink:      #F0EDE8;
+    --ms-ink-soft: #A8A49E;
+    --ms-rule:     #2A2826;
+    --ms-accent:   #D0342C;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ms-white:    #111110;
+  --ms-off:      #1A1917;
+  --ms-stone:    #6A6260;
+  --ms-stone-dk: #4A4240;
+  --ms-ink:      #F0EDE8;
+  --ms-ink-soft: #A8A49E;
+  --ms-rule:     #2A2826;
+  --ms-accent:   #D0342C;
+}
+
+/* ── Base Styles ──────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--ms-white);
+  color: var(--ms-ink);
+  font-family: var(--ms-body);
+  font-weight: 300;
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* ── Typography ───────────────────────────────────────── */
+.font-display { font-family: var(--ms-display); }
+.font-masthead { font-family: var(--ms-masthead); }
+.font-body { font-family: var(--ms-body); }
+
+/* ── Article Content ──────────────────────────────────── */
+.prose-editorial {
+  font-family: var(--ms-body);
+  font-size: 16px;
+  line-height: 1.85;
+  color: var(--ms-ink-soft);
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.prose-editorial p {
+  margin-bottom: 1.6em;
+}
+
+.prose-editorial h1,
+.prose-editorial h2,
+.prose-editorial h3 {
+  font-family: var(--ms-display);
+  color: var(--ms-ink);
+  margin-top: 2em;
+  margin-bottom: 0.6em;
+}
+
+.prose-editorial h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.08; }
+.prose-editorial h2 { font-family: var(--ms-script); font-size: clamp(34px, 4.5vw, 48px); font-weight: 700; line-height: 1.1; }
+.prose-editorial h3 { font-size: 20px; font-weight: 700; }
+
+/* Drop cap */
+.prose-editorial > p:first-of-type::first-letter {
+  font-family: var(--ms-display);
+  font-size: 76px;
+  font-weight: 900;
+  float: left;
+  line-height: 0.78;
+  margin: 10px 10px -4px 0;
+  color: var(--ms-ink);
+}
+
+/* Pull quote blockquote */
+.prose-editorial blockquote {
+  border: none;
+  border-top: 1px solid var(--ms-rule);
+  border-bottom: 1px solid var(--ms-rule);
+  padding: 36px 0;
+  margin: 48px 0;
+  text-align: center;
+  background: transparent;
+}
+
+.prose-editorial blockquote p {
+  font-family: var(--ms-display);
+  font-size: clamp(20px, 3vw, 32px);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ms-ink);
+  line-height: 1.4;
+  max-width: 580px;
+  margin: 0 auto 0;
+}
+
+.prose-editorial blockquote p::first-letter { all: revert; float: none; }
+
+.prose-editorial img {
+  max-width: 100%;
+  margin: 32px 0;
+}
+
+.prose-editorial a {
+  color: var(--ms-ink);
+  border-bottom: 1px solid var(--ms-rule);
+  padding-bottom: 1px;
+  transition: border-color 0.2s;
+}
+.prose-editorial a:hover { border-color: var(--ms-ink); }
+
+/* Lists and figures inside essays */
+.prose-editorial ul,
+.prose-editorial ol { margin: 0 0 1.6em 1.3em; }
+.prose-editorial ul { list-style: disc; }
+.prose-editorial ol { list-style: decimal; }
+.prose-editorial li { margin-bottom: 0.45em; padding-left: 0.2em; }
+.prose-editorial li::marker { color: var(--ms-stone-dk); }
+.prose-editorial img { display: block; margin: 40px auto; height: auto; }
+
+/* Fiction reading text */
+.prose-fiction {
+  font-family: var(--ms-serif);
+  font-size: 21px;
+  line-height: 1.7;
+  color: var(--ms-ink);
+}
+.prose-fiction p { margin-bottom: 1.1em; }
+.prose-fiction ul { margin: 0 0 1.1em 1.2em; list-style: disc; }
+.prose-fiction li { margin-bottom: 0.3em; }
+.prose-fiction h3 { font-family: var(--ms-display); font-size: 22px; }
+.prose-fiction .scene-break { border: none; margin: 2.2em auto; text-align: center; }
+.prose-fiction .scene-break::after { content: '\2042'; color: var(--ms-stone-dk); font-size: 20px; }
+.prose-fiction img { display: block; margin: 8px auto 32px; max-height: 70vh; width: auto; }
+@media (max-width: 600px) { .prose-fiction { font-size: 19px; } }
+
+/* Section rule */
+.section-rule {
+  border: none;
+  border-top: 1px solid var(--ms-rule);
+  margin: 56px auto;
+}

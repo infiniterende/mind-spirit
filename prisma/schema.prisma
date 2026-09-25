@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Author {
+  id        String   @id @default(cuid())
+  name      String
+  bio       String?
+  avatar    String?
+  slug      String   @unique
+  email     String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts     Post[]
+
+  @@map("authors")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  posts       Post[]
+
+  @@map("categories")
+}
+
+model Tag {
+  id    String     @id @default(cuid())
+  name  String     @unique
+  slug  String     @unique
+  posts PostTag[]
+
+  @@map("tags")
+}
+
+model Post {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String?
+  content     String    // MDX/Markdown content
+  coverImage  String?
+  featured    Boolean   @default(false)
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  authorId    String
+  author      Author    @relation(fields: [authorId], references: [id])
+
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+
+  tags        PostTag[]
+
+  @@map("posts")
+}
+
+model PostTag {
+  postId String
+  tagId  String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+  @@map("post_tags")
+}
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  active    Boolean  @default(true)
+
+  @@map("subscribers")
+}

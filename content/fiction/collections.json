@@ -1,0 +1,48 @@
+[
+  {
+    "slug": "world-of-eden",
+    "title": "World of Eden",
+    "description": "",
+    "kind": "serial",
+    "cover": "/images/covers/world-of-eden.webp",
+    "coverAlt": "World of Eden cover: a face whose hair dissolves into a starfield, with a spaceship and floating islands"
+  },
+  {
+    "slug": "when-we-were-catholics",
+    "title": "When We Were Catholics",
+    "description": "",
+    "kind": "serial",
+    "cover": "/images/covers/when-we-were-catholics.webp",
+    "coverAlt": "When We Were Catholics cover: three silhouettes walking over a hill at sunset"
+  },
+  {
+    "slug": "light-break-through",
+    "title": "Light Break Through",
+    "description": "",
+    "kind": "serial",
+    "cover": "/images/covers/light-break-through.webp",
+    "coverAlt": "Light Break Through cover: a hand reaching toward a starry sky and crescent moon"
+  },
+  {
+    "slug": "for-all-of-eternity",
+    "title": "For All Of Eternity",
+    "description": "",
+    "kind": "serial",
+    "cover": "/images/covers/for-all-of-eternity.webp",
+    "coverAlt": "For All Of Eternity cover: a line drawing of a ringed planet among stars"
+  },
+  {
+    "slug": "short-stories",
+    "title": "Short Stories",
+    "description": "",
+    "kind": "collection",
+    "cover": "/images/covers/short-stories.webp",
+    "coverAlt": "Short Stories cover: a figure tracing an infinity symbol in light against a twilight sky"
+  },
+  {
+    "slug": "normatives",
+    "title": "Normatives",
+    "description": "",
+    "kind": "serial"
+  }
+]
