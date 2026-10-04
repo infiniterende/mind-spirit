@@ -8,6 +8,7 @@ import { getCoverImage } from '@/lib/images'
 import { NewsletterForm } from '@/components/NewsletterForm'
 import { BookCover } from '@/components/BookCover'
 import { readingMinutes } from '@/components/Magazine'
+import { ISSUES } from '@/lib/issues'
 
 export const revalidate = 60 // ISR: revalidate every 60s
 
@@ -352,6 +353,27 @@ export default async function HomePage() {
               <p style={{ fontFamily: 'var(--ms-serif)', fontSize: 21, fontStyle: 'italic', color: 'var(--ms-ink-soft)', marginTop: 24, maxWidth: 320, lineHeight: 1.45 }}>
                 Essays on faith, the mind, and a well-ordered life — written for the modern believer.
               </p>
+              {ISSUES[0] && (
+                <a
+                  href={ISSUES[0].file}
+                  download
+                  className="ed-download"
+                  style={{
+                    ...caps,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    marginTop: 28,
+                    padding: '13px 18px',
+                    border: '1px solid var(--ms-ink)',
+                    color: 'var(--ms-ink)',
+                  }}
+                >
+                  <span aria-hidden style={{ color: 'var(--ms-accent)' }}>↓</span>
+                  Download {ISSUES[0].label}
+                  <span style={{ color: 'var(--ms-stone-dk)' }}>PDF · {ISSUES[0].pages} pp</span>
+                </a>
+              )}
             </div>
             <ol style={{ listStyle: 'none', display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', columnGap: 48 }} className="ed-toc">
               {contents.map((p, i) => (
@@ -619,6 +641,7 @@ export default async function HomePage() {
         .ed-mono:hover img { filter: grayscale(0) contrast(1); }
         .ed-title:hover h3, .ed-toc-item:hover span span:last-child { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
         .ed-more:hover { color: var(--ms-accent) !important; }
+        .ed-download:hover { background: var(--ms-ink); color: var(--ms-white) !important; }
         .ed-tile .ed-photo { position: absolute !important; }
         .ed-book { transition: transform 0.4s ease; }
         .ed-book:hover { transform: translateY(-8px); }

@@ -11,6 +11,7 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx prisma/seed.ts",
+    "issue:pdf": "node scripts/issue-pdf.mjs",
     "postinstall": "prisma skills sync || exit 0"
   },
   "dependencies": {
