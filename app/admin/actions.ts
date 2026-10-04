@@ -51,7 +51,7 @@ function allowedImage(src: string): boolean {
 }
 
 function text(formData: FormData, key: string): string {
-  return String(formData.get(key) ?? '').trim()
+  return String(formData.get(key) ?? '').replace(/\r\n?/g, '\n').trim()
 }
 
 export async function savePost(_: FormState, formData: FormData): Promise<FormState> {
@@ -60,7 +60,8 @@ export async function savePost(_: FormState, formData: FormData): Promise<FormSt
   const id = text(formData, 'id')
   const title = text(formData, 'title')
   const slug = slugify(text(formData, 'slug') || title)
-  const content = String(formData.get('content') ?? '')
+  // Textareas submit Windows line endings; store plain \n so Markdown blocks split correctly
+  const content = String(formData.get('content') ?? '').replace(/\r\n?/g, '\n')
   const categoryId = text(formData, 'categoryId') || null
   const coverImage = text(formData, 'coverImage') || null
   const date = text(formData, 'publishedAt')

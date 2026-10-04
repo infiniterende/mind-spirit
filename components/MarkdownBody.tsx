@@ -4,7 +4,8 @@ import { Fragment, type ReactNode } from 'react'
 // paragraphs, line breaks, ## headings, > quotes, lists, --- rules, images,
 // **bold**, *italic*, [links](url) and bare URLs.
 export function MarkdownBody({ source }: { source: string }) {
-  const blocks = source.split(/\n{2,}/)
+  // Normalise Windows line endings (textareas submit \r\n) before splitting into blocks
+  const blocks = source.replace(/\r\n?/g, '\n').trim().split(/\n{2,}/)
   return (
     <>
       {blocks.map((block, i) => {
@@ -41,10 +42,18 @@ export function MarkdownBody({ source }: { source: string }) {
           return <Tag key={i}>{inline(heading[2])}</Tag>
         }
 
-        if (block.startsWith('> ')) {
+        if (block.startsWith('>')) {
+          // Lines stay together (verse); a blank ">" line starts a new paragraph;
+          // a final line starting with a dash is the source
+          const quoteLines = block.split('\n').map(l => l.replace(/^> ?/, '').trimEnd())
+          const last = quoteLines[quoteLines.length - 1]?.trim() ?? ''
+          const cite = quoteLines.length > 1 && /^[—–-]\s*\S/.test(last) ? last.replace(/^[—–-]\s*/, '') : null
+          if (cite) quoteLines.pop()
+          const paragraphs = quoteLines.join('\n').split(/\n\s*\n/).map(p => p.trim()).filter(Boolean)
           return (
             <blockquote key={i}>
-              <p>{lines(block.replace(/^> ?/gm, ''))}</p>
+              {paragraphs.map((p, j) => <p key={j}>{lines(p)}</p>)}
+              {cite && <cite>{inline(cite)}</cite>}
             </blockquote>
           )
         }

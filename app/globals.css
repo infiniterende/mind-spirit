@@ -143,6 +143,18 @@ img {
 }
 
 .prose-editorial blockquote p::first-letter { all: revert; float: none; }
+.prose-editorial blockquote p + p { margin-top: 0.5em; }
+.prose-editorial blockquote cite {
+  display: block;
+  margin-top: 18px;
+  font-family: var(--ms-body);
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ms-accent);
+}
 
 .prose-editorial img {
   max-width: 100%;
