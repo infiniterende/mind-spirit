@@ -15,6 +15,7 @@ export interface EditablePost {
   categoryId: string
   published: boolean
   featured: boolean
+  coverStory: boolean
   publishedAt: string // yyyy-mm-dd
 }
 
@@ -284,7 +285,9 @@ export function PostEditor({ post, categories, uploadsEnabled, justSaved = false
 
           <Panel title="Publishing">
             <Toggle name="published" checked={p.published} onChange={v => set('published', v)} label="Published" hint="Visible on the site" />
-            <Toggle name="featured" checked={p.featured} onChange={v => set('featured', v)} label="Featured" hint="Eligible for the homepage cover" />
+            <Toggle name="featured" checked={p.featured} onChange={v => set('featured', v)} label="Featured" hint="Listed in the sidebar beside the cover story" />
+            <input type="hidden" name="coverStoryField" value="1" />
+            <Toggle name="coverStory" checked={p.coverStory} onChange={v => set('coverStory', v)} label="Cover story" hint="The homepage hero. Only one post at a time" />
             <label style={{ display: 'grid', gap: 6, marginTop: 6 }}>
               <span className="adm-label">Date</span>
               <input className="adm-input" type="date" name="publishedAt" value={p.publishedAt} onChange={e => set('publishedAt', e.target.value)} />

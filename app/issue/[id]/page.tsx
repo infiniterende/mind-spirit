@@ -222,6 +222,9 @@ export default async function IssuePage({ params }: Props) {
         .story-body li { margin-bottom: 0.04in; }
         .story-body img { max-width: 100%; height: auto; display: block; margin: 0.1in 0; break-inside: avoid; }
         .story-body a { color: inherit; text-decoration: underline; text-decoration-color: var(--muted); text-underline-offset: 2pt; overflow-wrap: anywhere; }
+        .story-body table { width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 0.12in; }
+        .story-body th { text-align: left; font-family: var(--ms-body); font-size: 6.5pt; letter-spacing: 0.18em; text-transform: uppercase; border-bottom: 1px solid var(--ink); padding: 0 6pt 3pt 0; }
+        .story-body td { border-bottom: 1px solid var(--rule); padding: 3pt 6pt 3pt 0; vertical-align: top; }
         .story-body hr { border: none; border-top: 1px solid var(--rule); margin: 0.16in 0; }
         .endmark { text-align: center; color: var(--accent); font-size: 12pt; margin-top: 0.2in; }
 

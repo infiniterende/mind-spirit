@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { requireAdmin } from '@/lib/admin-session'
 import { storageConfigured } from '@/lib/storage'
 import { PostEditor } from '@/components/admin/PostEditor'
+import { COVER_TAG } from '@/lib/posts'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -15,7 +16,7 @@ export default async function EditPostPage({ params, searchParams }: Props) {
   const { saved } = await searchParams
 
   const [post, categories] = await Promise.all([
-    prisma.post.findUnique({ where: { id } }),
+    prisma.post.findUnique({ where: { id }, include: { tags: { include: { tag: true } } } }),
     prisma.category.findMany({ orderBy: { name: 'asc' }, select: { id: true, name: true } }),
   ])
   if (!post) notFound()
@@ -36,6 +37,7 @@ export default async function EditPostPage({ params, searchParams }: Props) {
         categoryId: post.categoryId ?? '',
         published: post.published,
         featured: post.featured,
+        coverStory: post.tags.some((t: { tag: { slug: string } }) => t.tag.slug === COVER_TAG),
         publishedAt: (post.publishedAt ?? post.createdAt).toISOString().slice(0, 10),
       }}
     />

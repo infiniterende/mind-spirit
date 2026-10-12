@@ -63,6 +63,18 @@ export async function getFeaturedPosts(limit = 3): Promise<PostWithRelations[]> 
   }) as Promise<PostWithRelations[]>
 }
 
+// The homepage cover story is the published post carrying this tag (set with the
+// "Cover story" checkbox in the CMS). Without one, the newest featured post is used.
+export const COVER_TAG = 'cover-story'
+
+export async function getCoverStory(): Promise<PostWithRelations | null> {
+  return prisma.post.findFirst({
+    where: { published: true, tags: { some: { tag: { slug: COVER_TAG } } } },
+    include: postInclude,
+    orderBy: { publishedAt: 'desc' },
+  }) as Promise<PostWithRelations | null>
+}
+
 export async function getRecentPosts(limit = 6): Promise<PostWithRelations[]> {
   return prisma.post.findMany({
     where: { published: true },

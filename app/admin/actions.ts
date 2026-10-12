@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/prisma'
+import { COVER_TAG } from '@/lib/posts'
 import { SESSION_COOKIE, SESSION_DAYS, adminConfigured, checkPassword, createSessionToken } from '@/lib/admin-auth'
 import { requireAdmin } from '@/lib/admin-session'
 
@@ -95,6 +96,21 @@ export async function savePost(_: FormState, formData: FormData): Promise<FormSt
     if (!author) return { error: 'No author exists yet. Run the database seed first.' }
     const created = await prisma.post.create({ data: { ...data, authorId: author.id } })
     savedId = created.id
+  }
+
+  // "Cover story" is a tag held by one post at a time
+  if (formData.has('coverStoryField')) {
+    const tag = await prisma.tag.upsert({ where: { slug: COVER_TAG }, update: {}, create: { slug: COVER_TAG, name: 'Cover Story' } })
+    if (formData.get('coverStory') === 'on') {
+      await prisma.postTag.deleteMany({ where: { tagId: tag.id, postId: { not: savedId } } })
+      await prisma.postTag.upsert({
+        where: { postId_tagId: { postId: savedId, tagId: tag.id } },
+        update: {},
+        create: { postId: savedId, tagId: tag.id },
+      })
+    } else {
+      await prisma.postTag.deleteMany({ where: { tagId: tag.id, postId: savedId } })
+    }
   }
 
   revalidatePath('/', 'layout')

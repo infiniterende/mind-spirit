@@ -21,6 +21,7 @@ export default async function NewPostPage() {
         categoryId: '',
         published: false,
         featured: false,
+        coverStory: false,
         publishedAt: new Date().toISOString().slice(0, 10),
       }}
     />

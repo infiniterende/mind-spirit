@@ -1,7 +1,7 @@
 import { Fragment, type ReactNode } from 'react'
 
 // Renders the Markdown subset produced by the Squarespace imports (posts and fiction):
-// paragraphs, line breaks, ## headings, > quotes, lists, --- rules, images,
+// paragraphs, line breaks, ## headings, > quotes, lists, tables, --- rules, images,
 // **bold**, *italic*, [links](url) and bare URLs.
 export function MarkdownBody({ source }: { source: string }) {
   // Normalise Windows line endings (textareas submit \r\n) before splitting into blocks
@@ -40,6 +40,27 @@ export function MarkdownBody({ source }: { source: string }) {
         if (heading) {
           const Tag = heading[1].length === 2 ? 'h2' : 'h3'
           return <Tag key={i}>{inline(heading[2])}</Tag>
+        }
+
+        // Table: | a | b | rows with a |---|---| separator on the second line
+        const rows = block.split('\n')
+        if (rows.length >= 2 && rows.every(r => r.trim().startsWith('|')) && /^\|[\s:|-]+\|$/.test(rows[1].trim())) {
+          const cells = (r: string) => r.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim())
+          const [head, , ...body] = rows
+          return (
+            <div key={i} className="table-wrap">
+              <table>
+                <thead>
+                  <tr>{cells(head).map((c, j) => <th key={j}>{inline(c)}</th>)}</tr>
+                </thead>
+                <tbody>
+                  {body.map((r, j) => (
+                    <tr key={j}>{cells(r).map((c, k) => <td key={k}>{inline(c)}</td>)}</tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
         }
 
         if (block.startsWith('>')) {

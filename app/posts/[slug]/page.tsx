@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { format } from 'date-fns'
-import { getPostBySlug, getAllPublishedSlugs, getRecentPosts } from '@/lib/posts'
+import { COVER_TAG, getPostBySlug, getAllPublishedSlugs, getRecentPosts } from '@/lib/posts'
 import { PostCard } from '@/components/PostCard'
 import { NewsletterForm } from '@/components/NewsletterForm'
 import { getCoverImage } from '@/lib/images'
@@ -48,6 +48,9 @@ export default async function PostPage({ params }: Props) {
 
   // The title is shown in the header, so drop a leading "# Title" line from the body
   const body = post.content.replace(/^# .*\n+/, '')
+
+  // The cover-story marker is an internal tag, not a topic to show readers
+  const visibleTags = post.tags.filter(({ tag }: { tag: { slug: string } }) => tag.slug !== COVER_TAG)
 
   const related = relatedPosts.filter((p: { id: string }) => p.id !== post.id).slice(0, 3)
 
@@ -168,7 +171,8 @@ export default async function PostPage({ params }: Props) {
           loading="eager"
           fetchPriority="high"
           sizes="100vw"
-          style={{ objectFit: 'cover' }}
+          // The banner is very wide; favour the upper part so faces in tall photos aren't cut off
+          style={{ objectFit: 'cover', objectPosition: 'center 28%' }}
         />
       </div>
 
@@ -181,7 +185,7 @@ export default async function PostPage({ params }: Props) {
       </article>
 
       {/* ── Tags ─────────────────────────────────────────── */}
-      {post.tags.length > 0 && (
+      {visibleTags.length > 0 && (
         <div
           style={{
             maxWidth: 680,
@@ -192,7 +196,7 @@ export default async function PostPage({ params }: Props) {
             flexWrap: 'wrap',
           }}
         >
-          {post.tags.map(({ tag }: { tag: { id: string; name: string } }) => (
+          {visibleTags.map(({ tag }: { tag: { id: string; name: string } }) => (
             <span
               key={tag.id}
               style={{

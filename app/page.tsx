@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { format } from 'date-fns'
-import { getCategories, getFeaturedPosts, getPostsByCategory, getRecentPosts, type PostWithRelations } from '@/lib/posts'
+import { getCategories, getCoverStory, getFeaturedPosts, getPostsByCategory, getRecentPosts, type PostWithRelations } from '@/lib/posts'
 import { getFictionCollections } from '@/lib/fiction'
 import { FEATURED_ART } from '@/lib/portfolio'
 import { getCoverImage } from '@/lib/images'
@@ -188,8 +188,9 @@ function SectionHead({
 // ── Page ──────────────────────────────────────────────────────────
 
 export default async function HomePage() {
-  const [featured, recent, categories, ...sectionPosts] = await Promise.all([
-    getFeaturedPosts(5),
+  const [pinnedCover, featured, recent, categories, ...sectionPosts] = await Promise.all([
+    getCoverStory(),
+    getFeaturedPosts(8),
     getRecentPosts(30),
     getCategories(),
     ...SECTIONS.map(s => getPostsByCategory(s.slug, 14)),
@@ -203,8 +204,13 @@ export default async function HomePage() {
     return picked
   }
 
-  const [cover, ...coverLines] = take(featured, 5)
-  const contents = [...coverLines, ...take(recent, 4)]
+  // Cover story: the post marked as cover in the CMS, else the newest featured post.
+  // The other featured posts fill the sidebar beside it.
+  const [cover] = take(pinnedCover ? [pinnedCover] : featured, 1)
+  // Five stories beside the cover: featured first, topped up with the latest if there aren't enough
+  const coverLines = take(featured, 5)
+  coverLines.push(...take(recent, 5 - coverLines.length))
+  const contents = [...coverLines, ...take(recent, 3)]
   const [faith, mind, vita, meditationes] = SECTIONS.map((s, i) => ({
     ...s,
     category: categories.find(c => c.slug === s.slug),
@@ -255,22 +261,22 @@ export default async function HomePage() {
           {/* Cover lines, top right */}
           <ul
             className="ed-coverlines"
-            style={{ position: 'absolute', top: 40, right: 40, width: 300, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 18, padding: '20px 22px 22px', background: 'rgba(11,11,11,0.62)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}
+            style={{ position: 'absolute', top: 32, right: 40, width: 300, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 13, padding: '18px 22px 20px', background: 'rgba(11,11,11,0.62)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }}
           >
-            {coverLines.slice(0, 3).map(p => (
-              <li key={p.id} style={{ borderTop: '1px solid rgba(244,241,236,0.35)', paddingTop: 12 }}>
+            {coverLines.map(p => (
+              <li key={p.id} style={{ borderTop: '1px solid rgba(244,241,236,0.35)', paddingTop: 11 }}>
                 <Link href={`/posts/${p.slug}`} style={{ color: 'var(--ms-bone)' }}>
-                  <span style={{ ...caps, fontSize: 10, color: 'var(--ms-bone)', opacity: 0.8, display: 'block', marginBottom: 6 }}>
+                  <span style={{ ...caps, fontSize: 9, color: 'var(--ms-bone)', opacity: 0.8, display: 'block', marginBottom: 5 }}>
                     {p.category?.name}
                   </span>
-                  <span style={{ fontFamily: 'var(--ms-display)', fontSize: 17, fontWeight: 700, lineHeight: 1.25 }}>{p.title}</span>
+                  <span className="ed-coverline-title" style={{ fontFamily: 'var(--ms-display)', fontSize: 15, fontWeight: 700, lineHeight: 1.25 }}>{p.title}</span>
                 </Link>
               </li>
             ))}
           </ul>
 
           {/* Cover story */}
-          <div style={{ position: 'absolute', left: 40, right: 40, bottom: 48, maxWidth: 1100 }} className="ed-cover-text">
+          <div style={{ position: 'absolute', left: 40, right: 40, bottom: 48 }} className="ed-cover-text">
             <p style={{ ...caps, color: 'var(--ms-bone)', marginBottom: 20 }}>
               <span style={{ background: 'var(--ms-accent)', padding: '5px 10px', marginRight: 14 }}>Cover Story</span>
               {cover.category?.name}
@@ -279,10 +285,10 @@ export default async function HomePage() {
               <h1
                 style={{
                   fontFamily: 'var(--ms-masthead)',
-                  fontSize: 'clamp(44px, 7.4vw, 118px)',
+                  fontSize: 'clamp(34px, 4.6vw, 72px)',
                   fontWeight: 600,
-                  lineHeight: 0.92,
-                  letterSpacing: '-0.035em',
+                  lineHeight: 1,
+                  letterSpacing: '-0.025em',
                   color: 'var(--ms-bone)',
                   marginBottom: 22,
                   textWrap: 'balance',
@@ -641,6 +647,10 @@ export default async function HomePage() {
         .ed-mono:hover img { filter: grayscale(0) contrast(1); }
         .ed-title:hover h3, .ed-toc-item:hover span span:last-child { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
         .ed-more:hover { color: var(--ms-accent) !important; }
+        .ed-coverlines a:hover .ed-coverline-title { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+        .ed-cover-text { max-width: 1100px; }
+        /* Keep the headline clear of the sidebar on wide screens */
+        @media (min-width: 1101px) { .ed-cover-text { max-width: min(1100px, calc(100% - 420px)); } }
         .ed-download:hover { background: var(--ms-ink); color: var(--ms-white) !important; }
         .ed-tile .ed-photo { position: absolute !important; }
         .ed-book { transition: transform 0.4s ease; }
