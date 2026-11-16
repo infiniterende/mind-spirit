@@ -27,7 +27,6 @@ export interface FictionPiece {
   wordCount: number
   image?: string
   imageAlt?: string
-  featured: boolean
 }
 
 export function getFictionCollections(): FictionCollection[] {
@@ -73,16 +72,15 @@ function readPiece(collection: string, slug: string): FictionPiece {
     wordCount: body.split(/\s+/).filter(Boolean).length,
     image: data.image || undefined,
     imageAlt: data.imageAlt || undefined,
-    featured: data.featured === true,
   }
 }
 
-// The newest piece marked `featured: true`, shown on the homepage
-export function getFeaturedFiction(): (FictionPiece & { collectionTitle: string }) | null {
-  const picks = getFictionCollections().flatMap(c =>
-    getFictionPieces(c.slug).filter(p => p.featured).map(p => ({ ...p, collectionTitle: c.title })),
+// The most recently published piece across all collections, shown on the homepage
+export function getFeaturedFiction(): (FictionPiece & { collectionTitle: string; collectionKind: FictionCollection['kind'] }) | null {
+  const pieces = getFictionCollections().flatMap(c =>
+    getFictionPieces(c.slug).map(p => ({ ...p, collectionTitle: c.title, collectionKind: c.kind })),
   )
-  return picks.sort((a, b) => b.date.localeCompare(a.date))[0] ?? null
+  return pieces.sort((a, b) => b.date.localeCompare(a.date))[0] ?? null
 }
 
 // First prose paragraph, trimmed to a teaser

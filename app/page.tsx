@@ -574,20 +574,20 @@ export default async function HomePage() {
             {newFiction && (
               <article
                 className="ed-newfic"
-                style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 7fr) minmax(0, 5fr)', gap: 48, alignItems: 'center', marginBottom: 88 }}
+                style={{ display: 'grid', gridTemplateColumns: newFiction.image ? 'minmax(0, 7fr) minmax(0, 5fr)' : 'minmax(0, 760px)', gap: 48, alignItems: 'center', marginBottom: 88 }}
               >
-                <Link
-                  href={`/fiction/${newFiction.collection}/${newFiction.slug}`}
-                  className="ed-photo"
-                  style={{ display: 'block', position: 'relative', aspectRatio: '3/2', overflow: 'hidden', background: '#111' }}
-                >
-                  {newFiction.image && (
+                {newFiction.image && (
+                  <Link
+                    href={`/fiction/${newFiction.collection}/${newFiction.slug}`}
+                    className="ed-photo"
+                    style={{ display: 'block', position: 'relative', aspectRatio: '3/2', overflow: 'hidden', background: '#111' }}
+                  >
                     <Image src={newFiction.image} alt={newFiction.imageAlt ?? ''} fill sizes="(max-width: 900px) 100vw, 56vw" style={{ objectFit: 'cover' }} />
-                  )}
-                </Link>
+                  </Link>
+                )}
                 <div>
                   <p style={{ ...caps, color: 'var(--ms-accent)', marginBottom: 16 }}>
-                    New Short Story <span style={{ color: 'rgba(244,241,236,0.6)', marginLeft: 8 }}>— {newFiction.collectionTitle}</span>
+                    {newFiction.collectionKind === 'serial' ? 'New Chapter' : 'New Short Story'} <span style={{ color: 'rgba(244,241,236,0.6)', marginLeft: 8 }}>— {newFiction.collectionTitle}</span>
                   </p>
                   <Link href={`/fiction/${newFiction.collection}/${newFiction.slug}`} className="ed-title">
                     <h3
