@@ -2,7 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { format } from 'date-fns'
 import { getCategories, getCoverStory, getFeaturedPosts, getPostsByCategory, getRecentPosts, type PostWithRelations } from '@/lib/posts'
-import { getFictionCollections } from '@/lib/fiction'
+import { getFeaturedFiction, getFictionCollections } from '@/lib/fiction'
 import { FEATURED_ART } from '@/lib/portfolio'
 import { getCoverImage } from '@/lib/images'
 import { NewsletterForm } from '@/components/NewsletterForm'
@@ -217,6 +217,7 @@ export default async function HomePage() {
     posts: take(sectionPosts[i], s.slug === 'mind' ? 4 : 5),
   }))
   const books = getFictionCollections().filter(c => c.cover)
+  const newFiction = getFeaturedFiction()
   const ticker = recent.slice(0, 10)
   const now = new Date()
 
@@ -570,6 +571,53 @@ export default async function HomePage() {
         <section style={{ background: 'var(--ms-noir)' }}>
           <div className="ed-wrap" style={{ padding: '96px 40px 104px' }}>
             <SectionHead no="IV" latin="Fabulae" english="Fiction" href="/fiction" light />
+            {newFiction && (
+              <article
+                className="ed-newfic"
+                style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 7fr) minmax(0, 5fr)', gap: 48, alignItems: 'center', marginBottom: 88 }}
+              >
+                <Link
+                  href={`/fiction/${newFiction.collection}/${newFiction.slug}`}
+                  className="ed-photo"
+                  style={{ display: 'block', position: 'relative', aspectRatio: '3/2', overflow: 'hidden', background: '#111' }}
+                >
+                  {newFiction.image && (
+                    <Image src={newFiction.image} alt={newFiction.imageAlt ?? ''} fill sizes="(max-width: 900px) 100vw, 56vw" style={{ objectFit: 'cover' }} />
+                  )}
+                </Link>
+                <div>
+                  <p style={{ ...caps, color: 'var(--ms-accent)', marginBottom: 16 }}>
+                    New Short Story <span style={{ color: 'rgba(244,241,236,0.6)', marginLeft: 8 }}>— {newFiction.collectionTitle}</span>
+                  </p>
+                  <Link href={`/fiction/${newFiction.collection}/${newFiction.slug}`} className="ed-title">
+                    <h3
+                      style={{
+                        fontFamily: 'var(--ms-masthead)',
+                        fontSize: 'clamp(34px, 3.6vw, 54px)',
+                        fontWeight: 500,
+                        fontStyle: 'italic',
+                        lineHeight: 1.02,
+                        letterSpacing: '-0.02em',
+                        color: 'var(--ms-bone)',
+                        marginBottom: 20,
+                      }}
+                    >
+                      {newFiction.title}
+                    </h3>
+                  </Link>
+                  <p style={{ fontFamily: 'var(--ms-serif)', fontSize: 21, fontStyle: 'italic', lineHeight: 1.45, color: 'rgba(244,241,236,0.8)', marginBottom: 24 }}>
+                    {newFiction.excerpt}
+                  </p>
+                  <Link
+                    href={`/fiction/${newFiction.collection}/${newFiction.slug}`}
+                    className="ed-more"
+                    style={{ ...caps, color: 'var(--ms-bone)', borderBottom: '1px solid var(--ms-bone)', paddingBottom: 3 }}
+                  >
+                    Read the story — {Math.max(1, Math.round(newFiction.wordCount / 230))} min
+                  </Link>
+                </div>
+              </article>
+            )}
             <div className="ed-shelf" style={{ display: 'grid', gridTemplateColumns: `repeat(${books.length}, minmax(0, 1fr))`, gap: 28, alignItems: 'end' }}>
               {books.map((b, i) => (
                 <Link key={b.slug} href={`/fiction/${b.slug}`} className="ed-book" style={{ display: 'block' }}>
@@ -671,7 +719,7 @@ export default async function HomePage() {
           .ed-dateline { padding: 10px 20px !important; }
           .ed-cover-text { left: 20px !important; right: 20px !important; bottom: 32px !important; }
           .ed-toc { grid-template-columns: 1fr !important; }
-          .ed-fides, .ed-mens { grid-template-columns: 1fr !important; }
+          .ed-fides, .ed-mens, .ed-newfic { grid-template-columns: 1fr !important; gap: 28px !important; }
           .ed-overlap { margin-top: -60px !important; margin-right: 10% !important; }
           .ed-vita { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; grid-template-rows: none !important; grid-auto-rows: 52vw; max-height: none !important; }
           .ed-tile-0 { grid-column: 1 / -1 !important; grid-row: span 1 !important; }

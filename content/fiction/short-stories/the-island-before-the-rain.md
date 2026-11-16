@@ -4,6 +4,9 @@ date: "2026-11-15"
 order: 15
 excerpt: "On the sixth of November, 2019, the last crow on Kurohama flew into a clear sky and struck something hard enough to break its neck."
 squarespaceImage: ""
+featured: true
+image: "/images/fiction/the-island-before-the-rain.jpg"
+imageAlt: "The Houses of Parliament and Big Ben beside Westminster Bridge under a cloudy sky"
 ---
 
 *An alternate-history horror story set in 2019*

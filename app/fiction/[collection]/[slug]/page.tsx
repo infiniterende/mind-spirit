@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { format, parseISO } from 'date-fns'
@@ -76,6 +77,14 @@ export default async function FictionPiecePage({ params }: Props) {
         </p>
         <hr style={{ width: 48, border: 'none', borderTop: '1px solid var(--ms-ink)', margin: '36px auto 0' }} />
       </header>
+
+      {piece.image && (
+        <figure style={{ maxWidth: 1100, margin: '40px auto 0', padding: '0 24px' }}>
+          <div style={{ position: 'relative', aspectRatio: '3/2', overflow: 'hidden', background: 'var(--ms-off)' }}>
+            <Image src={piece.image} alt={piece.imageAlt ?? ''} fill loading="eager" fetchPriority="high" sizes="(max-width: 1100px) 100vw, 1100px" style={{ objectFit: 'cover' }} />
+          </div>
+        </figure>
+      )}
 
       <article className="prose-editorial prose-fiction" style={{ padding: '40px 24px 64px' }}>
         <MarkdownBody source={piece.body} />
