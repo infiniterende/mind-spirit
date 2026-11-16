@@ -1,7 +1,7 @@
 import { Fragment, type ReactNode } from 'react'
 
 // Renders the Markdown subset produced by the Squarespace imports (posts and fiction):
-// paragraphs, line breaks, ## headings, > quotes, lists, tables, --- rules, images,
+// paragraphs, line breaks, ## headings, > quotes, lists, tables, --- rules, images, YouTube links,
 // **bold**, *italic*, [links](url) and bare URLs.
 export function MarkdownBody({ source }: { source: string }) {
   // Normalise Windows line endings (textareas submit \r\n) before splitting into blocks
@@ -17,6 +17,23 @@ export function MarkdownBody({ source }: { source: string }) {
             // Plain <img> so Markdown images keep their natural proportions
             // eslint-disable-next-line @next/next/no-img-element
             <img key={i} src={image[2]} alt={image[1]} loading="lazy" />
+          )
+        }
+
+        // A YouTube link on its own line becomes an embedded player
+        const video = block.trim().match(/^https?:\/\/(?:www\.|m\.)?(?:youtube\.com\/watch\?(?:[^\s]*&)?v=|youtu\.be\/)([\w-]{11})\S*$/)
+        if (video) {
+          return (
+            <div key={i} className="video-embed">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${video[1]}`}
+                title="YouTube video"
+                loading="lazy"
+                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+            </div>
           )
         }
 
