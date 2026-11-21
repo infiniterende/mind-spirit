@@ -210,12 +210,14 @@ export default async function HomePage() {
   // Five stories beside the cover: featured first, topped up with the latest if there aren't enough
   const coverLines = take(featured, 5)
   coverLines.push(...take(recent, 5 - coverLines.length))
-  const contents = [...coverLines, ...take(recent, 3)]
+  // Topic sections claim their newest posts first, so a new post shows up in its own section;
+  // the Contents list is then topped up with recent posts not shown anywhere else
   const [faith, mind, vita, meditationes] = SECTIONS.map((s, i) => ({
     ...s,
     category: categories.find(c => c.slug === s.slug),
     posts: take(sectionPosts[i], s.slug === 'mind' ? 4 : 5),
   }))
+  const contents = [...coverLines, ...take(recent, 3)]
   const books = getFictionCollections().filter(c => c.cover)
   const newFiction = getFeaturedFiction()
   const ticker = recent.slice(0, 10)
