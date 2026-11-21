@@ -8,5 +8,6 @@ export interface Issue {
 }
 
 export const ISSUES: Issue[] = [
+  { id: '2026-11', label: 'N° 11 — November 2026', file: '/issues/mind-spirit-2026-11.pdf', pages: 46 },
   { id: '2026-09', label: 'N° 09 — September 2026', file: '/issues/mind-spirit-2026-09.pdf', pages: 46 },
 ]

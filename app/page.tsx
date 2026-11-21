@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { format } from 'date-fns'
-import { getCategories, getCoverStory, getFeaturedPosts, getPostsByCategory, getRecentPosts, type PostWithRelations } from '@/lib/posts'
+import { MIN_ISSUE_POSTS, getCategories, getCoverStory, getFeaturedPosts, getIssuePosts, getPostsByCategory, getRecentPosts, type PostWithRelations } from '@/lib/posts'
 import { getFeaturedFiction, getFictionCollections } from '@/lib/fiction'
 import { FEATURED_ART } from '@/lib/portfolio'
 import { getCoverImage } from '@/lib/images'
@@ -188,7 +188,9 @@ function SectionHead({
 // ── Page ──────────────────────────────────────────────────────────
 
 export default async function HomePage() {
-  const [pinnedCover, featured, recent, categories, ...sectionPosts] = await Promise.all([
+  const today = new Date()
+  const [issuePosts, pinnedCover, featured, recent, categories, ...sectionPosts] = await Promise.all([
+    getIssuePosts(today.getFullYear(), today.getMonth() + 1),
     getCoverStory(),
     getFeaturedPosts(8),
     getRecentPosts(30),
@@ -217,7 +219,10 @@ export default async function HomePage() {
     category: categories.find(c => c.slug === s.slug),
     posts: take(sectionPosts[i], s.slug === 'mind' ? 4 : 5),
   }))
-  const contents = [...coverLines, ...take(recent, 3)]
+  // Contents is this month's issue (it may repeat stories shown elsewhere; it's the issue's index).
+  // Early in a month, before the issue has enough posts, fall back to the sidebar plus the latest.
+  const monthPosts = issuePosts.filter(p => p.publishedAt && p.publishedAt.getMonth() === today.getMonth() && p.publishedAt.getFullYear() === today.getFullYear())
+  const contents = monthPosts.length >= MIN_ISSUE_POSTS ? monthPosts.slice(0, 12) : [...coverLines, ...take(recent, 3)]
   const books = getFictionCollections().filter(c => c.cover)
   const newFiction = getFeaturedFiction()
   const ticker = recent.slice(0, 10)

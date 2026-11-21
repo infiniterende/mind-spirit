@@ -3,8 +3,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { format } from 'date-fns'
-import { prisma } from '@/lib/prisma'
-import type { PostWithRelations } from '@/lib/posts'
+import { getIssuePosts, type PostWithRelations } from '@/lib/posts'
 import { getCoverImage } from '@/lib/images'
 import { getFictionCollections } from '@/lib/fiction'
 import { MarkdownBody } from '@/components/MarkdownBody'
@@ -20,27 +19,6 @@ const VERSE = {
   reference: 'Hebrews 11:1',
 }
 
-const include = { author: true, category: true, tags: { include: { tag: true } } } as const
-
-// An issue is the homepage line-up as it stood at the end of that month:
-// the five newest featured stories, then the four newest of everything else.
-async function getIssue(year: number, month: number) {
-  const cutoff = new Date(year, month, 1) // first day of the following month
-  const featured = (await prisma.post.findMany({
-    where: { published: true, featured: true, publishedAt: { lt: cutoff } },
-    include,
-    orderBy: { publishedAt: 'desc' },
-    take: 5,
-  })) as PostWithRelations[]
-  const latest = (await prisma.post.findMany({
-    where: { published: true, publishedAt: { lt: cutoff }, id: { notIn: featured.map(p => p.id) } },
-    include,
-    orderBy: { publishedAt: 'desc' },
-    take: 4,
-  })) as PostWithRelations[]
-  return [...featured, ...latest]
-}
-
 // When building the PDF locally, route images through the JPEG helper so the file stays small
 const img = (src: string, w: number) =>
   process.env.NODE_ENV === 'development' ? `/api/issue-image?src=${encodeURIComponent(src)}&w=${w}` : src
@@ -54,7 +32,7 @@ export default async function IssuePage({ params }: Props) {
   const year = +m[1]
   const month = +m[2]
 
-  const stories = await getIssue(year, month)
+  const stories = await getIssuePosts(year, month)
   if (stories.length === 0) notFound()
 
   const [cover, ...rest] = stories
